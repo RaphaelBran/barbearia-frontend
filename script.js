@@ -1,15 +1,15 @@
 // Configuração Centralizada dos Barbeiros - Barbearia 3 Monkeys
 
 // URL do Backend - Mude para produção quando deployar
-const API_BASE_URL = 'https://barbearia-backend-production-a5ef.up.railway.app';
+const API_BASE_URL = '';
 
 const BARBEIROS_CONFIG = {
-  eduardo: {
-    nome: "Eduardo",
-    whatsapp: "5515991932175",
-    instagram: "https://www.instagram.com/de_lara_barber/",
-    instagramHandle: "@de_lara_barber",
-    foto: "assets/barber-eduardo.jpg",
+  barbeiro1: {
+    nome: "Barbeiro 1",
+    whatsapp: "5511999999999",
+    instagram: "https://instagram.com",
+    instagramHandle: "@instagram",
+    foto: "https://ui-avatars.com/api/?name=Barbeiro+1&background=6c757d&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -18,12 +18,12 @@ const BARBEIROS_CONFIG = {
       "assets/work-5.jpg"
     ]
   },
-  caique: {
-    nome: "Caique",
-    whatsapp: "5515999999999",
-    instagram: "https://www.instagram.com/caique_de_lara/",
-    instagramHandle: "@caique_de_lara",
-    foto: "assets/barber-caique.jpg",
+  barbeiro2: {
+    nome: "Barbeiro 2",
+    whatsapp: "5511999999999",
+    instagram: "https://instagram.com",
+    instagramHandle: "@instagram",
+    foto: "https://ui-avatars.com/api/?name=Barbeiro+2&background=6c757d&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -32,12 +32,12 @@ const BARBEIROS_CONFIG = {
       "assets/work-5.jpg"
     ]
   },
-  jorge: {
-    nome: "Jorge",
-    whatsapp: "5515999999999",
-    instagram: "https://www.instagram.com/barbeirogeorge/",
-    instagramHandle: "@barbeirogeorge",
-    foto: "assets/barber-jorge.jpg",
+  barbeiro3: {
+    nome: "Barbeiro 3",
+    whatsapp: "5511999999999",
+    instagram: "https://instagram.com",
+    instagramHandle: "@instagram",
+    foto: "https://ui-avatars.com/api/?name=Barbeiro+3&background=6c757d&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -432,9 +432,9 @@ function confirmBooking() {
 // Mapeamento de barbeiro para ID do banco de dados
 function getBarberId(barberKey) {
     const barberIds = {
-        'eduardo': 1,
-        'caique': 2,
-        'jorge': 3
+        'barbeiro1': 1,
+        'barbeiro2': 2,
+        'barbeiro3': 3
     };
     return barberIds[barberKey] || 1;
 }

@@ -1,141 +1,189 @@
-# Barbearia 3 Monkeys - Site de Agendamento
+# Sistema de Agendamento para Barbearia
 
-Site estático (Single Page Application) para a Barbearia 3 Monkeys com estética de quadrinhos/comics.
+Sistema completo de agendamento para barbearias com frontend moderno e backend em Node.js com SQLite.
 
 ## 🎨 Características
 
-- **Estilo Comic Book:** Design inspirado em HQs com bordas pretas grossas e sombras duras
-- **Paleta de Cores:** Fundo grafite escuro com vermelho vivo, amarelo neon e azul cyan
-- **Mobile-First:** Responsivo para todos os dispositivos
-- **3 Barbeiros:** Eduardo, Caique e Jorge
-- **Modal Interativo:** Carrossel de serviços e tabela de preços
-- **Integração WhatsApp:** Botão fixo para confirmação de agendamento
-- **Integração Instagram:** Link direto para o perfil da barbearia
+- **Design Moderno:** Interface limpa e responsiva com mobile-first
+- **Sistema de Agendamento:** Fluxo completo em 5 etapas (serviço, data, horário, dados, confirmação)
+- **3 Barbeiros:** Configuração genérica para Barbeiro 1, Barbeiro 2 e Barbeiro 3
+- **Integração Google Calendar:** Opcional, para sincronização automática
+- **Banco de Dados SQLite:** Local, sem necessidade de serviços externos
+- **Deploy Unificado:** Frontend e backend juntos em um único servidor
 
 ## 📁 Estrutura de Arquivos
 
 ```
 barbearia/
-├── index.html          # Estrutura principal
-├── styles.css          # Estilos customizados (efeitos HQ)
+├── index.html          # Frontend principal
+├── styles.css          # Estilos customizados
 ├── script.js           # Lógica JavaScript e dados dos barbeiros
-├── server.js           # Servidor HTTP simples (Node.js)
+├── backend/            # Backend Node.js
+│   ├── server.js       # Servidor Express
+│   ├── config/         # Configurações
+│   │   ├── database.js # SQLite
+│   │   └── google.js   # Google Calendar OAuth
+│   ├── routes/         # Rotas da API
+│   │   ├── booking.js  # Agendamentos
+│   │   ├── auth.js     # Autenticação Google
+│   │   └── calendar.js # Google Calendar
+│   ├── package.json    # Dependências
+│   └── .env.example    # Modelo de variáveis de ambiente
 ├── assets/             # Diretório de imagens
-│   ├── README.md       # Instruções para adicionar imagens
-│   ├── logo.png        # Logo da 3 Monkeys
+│   ├── logo.png
 │   ├── barber-eduardo.jpg
 │   ├── barber-caique.jpg
 │   ├── barber-jorge.jpg
-│   ├── service-1.jpg
-│   ├── service-2.jpg
-│   ├── service-3.jpg
-│   ├── service-4.jpg
-│   └── service-5.jpg
+│   └── work-*.jpg      # Fotos de trabalhos
+├── .gitignore          # Arquivos ignorados
+├── database.sqlite     # Banco de dados (gerado automaticamente)
 └── README.md           # Este arquivo
 ```
 
-## 🚀 Como Usar
+## 🚀 Como Usar Localmente
 
-### Opção 1: Servidor Node.js (Recomendado)
+### Pré-requisitos
+- Node.js instalado (versão 14 ou superior)
 
-1. Certifique-se de ter o Node.js instalado
-2. No terminal, execute:
+### Instalação
+
+1. Clone o repositório
+2. Entre na pasta do backend:
    ```bash
-   node server.js
+   cd backend
    ```
-3. Abra o navegador em: `http://localhost:8000`
+3. Instale as dependências:
+   ```bash
+   npm install
+   ```
+4. Crie o arquivo `.env` baseado no `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
+5. Configure as variáveis de ambiente no `.env` (opcional, apenas para Google Calendar)
 
-### Opção 2: Abrir Diretamente no Navegador
+### Executar
 
-1. Abra o arquivo `index.html` diretamente no navegador
-2. Nota: Algumas funcionalidades podem não funcionar perfeitamente sem um servidor
+1. Inicie o servidor:
+   ```bash
+   npm start
+   ```
+2. Acesse no navegador: `http://localhost:3000`
 
-## 📝 Como Editar
+O banco de dados SQLite será criado automaticamente na primeira execução.
+
+## 📝 Como Personalizar
 
 ### Alterar Informações dos Barbeiros
 
-Edite o arquivo `script.js` e modifique o array `barbers`:
+Edite o arquivo `script.js` e modifique o objeto `BARBEIROS_CONFIG`:
 
 ```javascript
-const barbers = [
-    {
-        id: 1,
-        name: "Eduardo",
-        photo: "assets/barber-eduardo.jpg",
-        calendarLink: "https://calendar.google.com/calendar/u/0/r?pli=1",
-        services: [
-            { name: "Corte", price: 50 },
-            { name: "Barba", price: 50 },
-            { name: "Combo", price: 90 }
-        ]
-    },
-    // ... outros barbeiros
-];
+const BARBEIROS_CONFIG = {
+  barbeiro1: {
+    nome: "Nome do Barbeiro 1",
+    whatsapp: "5511999999999",
+    instagram: "https://www.instagram.com/seu_perfil/",
+    instagramHandle: "@seu_perfil",
+    foto: "assets/barber-eduardo.jpg",
+    trabalhos: [
+      "assets/work-1.jpg",
+      // ...
+    ]
+  },
+  // ...
+};
 ```
-
-### Alterar Número do WhatsApp
-
-Edite o arquivo `script.js` e modifique a variável:
-
-```javascript
-const whatsappNumber = "5515991932175";
-```
-
-### Alterar Link do Instagram
-
-Edite o arquivo `index.html` e procure pelo link do Instagram no header.
 
 ### Alterar Preços dos Serviços
 
-Edite o arquivo `index.html` e modifique a tabela de preços na seção do modal.
+Edite o arquivo `index.html` na seção do modal de agendamento (Screen 1).
 
-## 🖼️ Como Adicionar Imagens Reais
+### Alterar Título e Instagram
+
+Edite o arquivo `index.html`:
+- Título na tag `<title>`
+- Instagram no botão `.instagram-btn`
+
+### Configurar Google Calendar (Opcional)
+
+1. Crie um projeto no [Google Cloud Console](https://console.cloud.google.com)
+2. Habilite a API Google Calendar
+3. Crie credenciais OAuth 2.0
+4. Configure o redirect URI para: `http://localhost:3000/auth/google/callback`
+5. Preencha as variáveis no `.env`:
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
+   - `GOOGLE_REDIRECT_URI`
+
+## 🖼️ Como Adicionar Imagens
 
 1. Adicione as imagens no diretório `assets/`
-2. Mantenha os nomes dos arquivos conforme especificado em `assets/README.md`
-3. Recomendações:
-   - Logo: PNG com fundo transparente
+2. Recomendações:
+   - Logo: PNG com fundo transparente (200x200px)
    - Fotos dos barbeiros: Formato quadrado (mínimo 300x300px)
-   - Fotos dos serviços: Formato paisagem (mínimo 400x300px)
+   - Fotos de trabalhos: Formato paisagem (mínimo 400x300px)
 
 ## 🎯 Funcionalidades
 
-### Grid de Barbeiros
-- Cards estilo painel de HQ
-- Foto circular do barbeiro
-- Nome em balão de fala
-- Clique para abrir modal
+### Sistema de Agendamento
+- **Tela 1:** Seleção de serviço (Corte, Barba, Combo)
+- **Tela 2:** Calendário interativo com navegação mensal
+- **Tela 3:** Grade de horários disponíveis (09:00-20:00)
+- **Tela 4:** Formulário de dados do cliente
+- **Tela 5:** Confirmação de agendamento
 
-### Modal
-- Carrossel com 5 fotos de serviços
-- Tabela de preços (Corte: R$50, Barba: R$50, Combo: R$90)
-- Botão para Google Calendar (placeholder)
-
-### WhatsApp
-- Botão fixo no rodapé
-- Gera mensagem pré-definida com dados do agendamento
-- Link direto para o WhatsApp da barbearia
+### Integrações
+- **Google Calendar:** Criação automática de eventos (opcional)
+- **WhatsApp:** Botão para contato (configurável)
+- **Instagram:** Link direto para o perfil (configurável)
 
 ## 📱 Responsividade
 
-O site é totalmente responsivo e funciona em:
+O sistema é totalmente responsivo e funciona em:
 - Smartphones (mobile-first)
 - Tablets
 - Desktops
 
 ## 🔧 Tecnologias Utilizadas
 
+### Frontend
 - HTML5
-- Tailwind CSS (via CDN)
+- CSS3 (Custom)
 - JavaScript (Vanilla)
-- Google Fonts (Bangers, Roboto)
-- Node.js (para servidor local)
+- Google Fonts (Roboto)
 
-## 📞 Contato
+### Backend
+- Node.js
+- Express.js
+- SQLite3
+- Google APIs (opcional)
+- dotenv
 
-- **WhatsApp:** +55 15 991932175
-- **Instagram:** @barbearia3monkeys
+## � Deploy em Produção
+
+O projeto pode ser hospedado em plataformas como:
+- **Railway:** Deploy unificado com persistência de arquivo
+- **Render:** Web Service com build automático
+- **Heroku:** Com addon de persistência
+- **Qualquer VPS:** Node.js + SQLite
+
+Consulte o arquivo `DEPLOY.md` para instruções detalhadas.
+
+## 📊 Banco de Dados
+
+O SQLite cria automaticamente duas tabelas:
+- `barbers`: Informações dos barbeiros
+- `bookings`: Agendamentos realizados
+
+Os dados são persistidos localmente no arquivo `database.sqlite`.
+
+## 🔒 Segurança
+
+- Arquivo `.env` protegido no `.gitignore`
+- Banco de dados SQLite protegido no `.gitignore`
+- Variáveis de ambiente para credenciais sensíveis
 
 ---
 
-Desenvolvido para Barbearia 3 Monkeys - Sorocaba/SP
+**Sistema Genérico para Barbearias** - Personalizável para qualquer negócio
