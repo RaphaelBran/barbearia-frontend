@@ -3,6 +3,9 @@
 // URL do Backend - Mude para produção quando deployar
 const API_BASE_URL = '';
 
+// Número do WhatsApp para confirmação de agendamento (formato: 5511999999999)
+const NUMERO_WHATSAPP = '5511999999999';
+
 const BARBEIROS_CONFIG = {
   barbeiro1: {
     nome: "Barbeiro 1",
@@ -421,11 +424,28 @@ function confirmBooking() {
     .finally(() => {
         showBookingScreen(5);
         
-        // Fechar modais automaticamente após 2 segundos
+        // Formatar mensagem para WhatsApp
+        const formattedDate = bookingData.date.toLocaleDateString('pt-BR');
+        const message = encodeURIComponent(
+            `Olá! Confirmo meu agendamento:\n\n` +
+            `👤 Cliente: ${bookingData.clientName}\n` +
+            `✂️ Serviço: ${bookingData.service}\n` +
+            `📅 Data: ${formattedDate}\n` +
+            `⏰ Horário: ${bookingData.time}\n` +
+            `💰 Valor: R$ ${bookingData.price},00\n\n` +
+            `Aguardo confirmação!`
+        );
+        
+        // Abrir WhatsApp após 1 segundo
+        setTimeout(() => {
+            window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${message}`, '_blank');
+        }, 1000);
+        
+        // Fechar modais automaticamente após 3 segundos
         setTimeout(() => {
             closeBookingModal();
             closeBarberModal();
-        }, 2000);
+        }, 3000);
     });
 }
 
