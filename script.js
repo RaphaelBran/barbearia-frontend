@@ -1,15 +1,15 @@
-// Configuração Centralizada dos Barbeiros - Barbearia 3 Monkeys
+// Configuração Centralizada dos Barbeiros - Sua Barbearia
 
 // URL do Backend - Mude para produção quando deployar
-const API_BASE_URL = '';
+const API_BASE_URL = 'http://localhost:3000';
 
 // Número do WhatsApp para confirmação de agendamento (formato: 5511999999999)
-const NUMERO_WHATSAPP = '5511999999999';
+const NUMERO_WHATSAPP = '5515991932175';
 
 const BARBEIROS_CONFIG = {
   barbeiro1: {
     nome: "Barbeiro 1",
-    whatsapp: "5511999999999",
+    whatsapp: "5515991932175",
     instagram: "https://instagram.com",
     instagramHandle: "@instagram",
     foto: "https://ui-avatars.com/api/?name=Barbeiro+1&background=6c757d&color=fff&size=300",
