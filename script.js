@@ -1,7 +1,7 @@
 // Configuração Centralizada dos Barbeiros - Sua Barbearia
 
-// URL do Backend - Mude para produção quando deployar
-const API_BASE_URL = 'http://localhost:3000';
+// URL do Backend - Detecta automaticamente (localhost ou produção)
+const API_BASE_URL = window.location.origin;
 
 // Número do WhatsApp para confirmação de agendamento (formato: 5511999999999)
 const NUMERO_WHATSAPP = '5515991932175';
