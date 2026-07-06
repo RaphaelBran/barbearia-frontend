@@ -8,15 +8,19 @@ COPY cmd/package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application
+# Copy backend files
 COPY cmd ./
-COPY index.html ../
-COPY styles.css ../
-COPY script.js ../
-COPY assets ../assets/
 
-# Expose port
+# Copy frontend files to parent directory (as expected by server.js)
+RUN mkdir -p /app/frontend
+COPY index.html /app/frontend/
+COPY styles.css /app/frontend/
+COPY script.js /app/frontend/
+COPY assets /app/frontend/assets/
+
+# Expose port and set frontend directory
 ENV PORT=3000
+ENV FRONTEND_DIR=/app/frontend
 EXPOSE 3000
 
 # Start the application

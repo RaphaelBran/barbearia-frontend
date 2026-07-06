@@ -18,10 +18,11 @@ console.log('NODE_ENV:', process.env.NODE_ENV);
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from parent directory
+// Serve static files from parent directory (or frontend directory in Docker)
 const parentDir = path.join(__dirname, '..');
-console.log('Servindo arquivos estáticos de:', parentDir);
-app.use(express.static(parentDir));
+const frontendDir = process.env.FRONTEND_DIR || parentDir;
+console.log('Servindo arquivos estáticos de:', frontendDir);
+app.use(express.static(frontendDir));
 
 // Initialize database before starting server
 async function startServer() {
@@ -37,7 +38,7 @@ async function startServer() {
 
         // Serve frontend
         app.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'index.html'));
+            res.sendFile(path.join(frontendDir, 'index.html'));
         });
 
         // Health check endpoint
