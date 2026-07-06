@@ -18,10 +18,8 @@ COPY styles.css /app/frontend/
 COPY script.js /app/frontend/
 COPY assets /app/frontend/assets/
 
-# Expose port and set frontend directory
-ENV PORT=3000
+# Set frontend directory (PORT will be injected by Railway)
 ENV FRONTEND_DIR=/app/frontend
-EXPOSE 3000
 
 # Start the application
 CMD ["node", "server.js"]
