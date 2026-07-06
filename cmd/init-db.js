@@ -33,20 +33,19 @@ async function insertBarbers() {
         for (const barber of barbers) {
             await new Promise((resolve, reject) => {
                 db.run(
-                    `INSERT INTO barbers (name, whatsapp, instagram, instagram_handle, photo)
+                    `INSERT OR IGNORE INTO barbers (name, whatsapp, instagram, instagram_handle, photo)
                      VALUES (?, ?, ?, ?, ?)`,
                     [barber.name, barber.whatsapp, barber.instagram, barber.instagram_handle, barber.photo],
                     function(err) {
                         if (err) {
-                            // Se já existe, ignora o erro
-                            if (err.message.includes('UNIQUE constraint')) {
-                                console.log(`Barbeiro ${barber.name} já existe, pulando...`);
-                                resolve();
-                            } else {
-                                reject(err);
-                            }
+                            console.error(`Erro ao inserir barbeiro ${barber.name}:`, err);
+                            resolve();
                         } else {
-                            console.log(`Barbeiro ${barber.name} inserido com sucesso`);
+                            if (this.changes > 0) {
+                                console.log(`Barbeiro ${barber.name} inserido com sucesso`);
+                            } else {
+                                console.log(`Barbeiro ${barber.name} já existe, pulando...`);
+                            }
                             resolve();
                         }
                     }
