@@ -99,22 +99,25 @@ document.addEventListener('DOMContentLoaded', function() {
 function openBarberProfile(barberKey) {
     currentBarberKey = barberKey;
     currentBarber = BARBEIROS_CONFIG[barberKey];
-    
+
     if (!currentBarber) {
         alert('Erro: Barbeiro não encontrado');
         return;
     }
-    
+
     // Preencher dados do modal
     document.getElementById('barber-modal-img').src = currentBarber.foto;
     document.getElementById('barber-modal-name').textContent = currentBarber.nome;
     document.getElementById('barber-modal-instagram').href = currentBarber.instagram;
     document.getElementById('barber-modal-instagram-text').textContent = currentBarber.instagramHandle;
-    
+
     // Resetar carrossel
     carouselIndex = 0;
     document.getElementById('carousel-section').classList.remove('active');
-    
+
+    // Verificar status do Google Calendar
+    checkGoogleAuthStatus();
+
     // Mostrar modal
     document.getElementById('barber-modal').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -458,6 +461,53 @@ function getBarberId(barberKey) {
     };
     return barberIds[barberKey] || 1;
 }
+
+// ===== FUNÇÕES DO GOOGLE CALENDAR =====
+
+// Verificar status de autorização do Google Calendar
+function checkGoogleAuthStatus() {
+    const barberId = getBarberId(currentBarberKey);
+    const statusEl = document.getElementById('google-auth-status');
+    const btnTextEl = document.getElementById('google-auth-text');
+
+    fetch(`${API_BASE_URL}/api/booking/barber/${barberId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.bookings) {
+                // Verificar se o barbeiro tem token Google (precisamos de um endpoint específico para isso)
+                // Por enquanto, vamos assumir que não está conectado
+                statusEl.textContent = 'Não conectado';
+                statusEl.className = 'google-auth-status not-connected';
+                btnTextEl.textContent = 'Conectar Google Calendar';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao verificar status:', error);
+            statusEl.textContent = 'Erro ao verificar';
+        });
+}
+
+// Autorizar Google Calendar
+function authorizeGoogleCalendar() {
+    const barberId = getBarberId(currentBarberKey);
+    const authUrl = `${API_BASE_URL}/auth/google?barber_id=${barberId}`;
+    window.location.href = authUrl;
+}
+
+// Verificar se voltou da autorização com sucesso
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authStatus = urlParams.get('auth');
+
+    if (authStatus === 'success') {
+        alert('Google Calendar conectado com sucesso!');
+        // Remover o parâmetro da URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (authStatus === 'error') {
+        alert('Erro ao conectar Google Calendar. Tente novamente.');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
 
 // ===== FECHAR MODAIS COM ESC =====
 
