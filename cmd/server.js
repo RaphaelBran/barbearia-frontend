@@ -46,9 +46,9 @@ async function startServer() {
             res.json({ status: 'ok', timestamp: new Date().toISOString() });
         });
 
-        // Start server
-        app.listen(PORT, () => {
-            console.log(`Servidor rodando em http://localhost:${PORT}`);
+        // Start server - listen on all interfaces (0.0.0.0) for Railway
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
             console.log('Ambiente:', process.env.NODE_ENV || 'development');
         });
     } catch (error) {
