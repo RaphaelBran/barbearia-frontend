@@ -1,7 +1,0 @@
-{
-  "build": {
-    "cwd": "cmd",
-    "buildCommand": "npm install",
-    "startCommand": "node server.js"
-  }
-}
