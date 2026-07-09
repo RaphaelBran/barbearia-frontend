@@ -322,55 +322,6 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.modal-google-auth {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-}
-
-.btn-google-auth {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px 20px;
-    background: #4285f4;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.btn-google-auth:hover {
-    background: #3367d6;
-}
-
-.btn-google-auth svg {
-    width: 20px;
-    height: 20px;
-}
-
-.google-auth-status {
-    display: block;
-    margin-top: 10px;
-    font-size: 12px;
-    text-align: center;
-    color: #666;
-}
-
-.google-auth-status.connected {
-    color: #4caf50;
-    font-weight: 500;
-}
-
-.google-auth-status.not-connected {
-    color: #f44336;
-}
-
 .btn-view-works {
     background: #8b7355;
     color: white;
