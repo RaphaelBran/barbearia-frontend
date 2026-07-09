@@ -21,8 +21,5 @@ COPY assets /app/frontend/assets/
 # Set frontend directory (PORT will be injected by Railway)
 ENV FRONTEND_DIR=/app/frontend
 
-# Expose port for Railway
-EXPOSE 3000
-
-# Start the application
+# Start the application (PORT will be injected by Railway via process.env.PORT)
 CMD ["node", "server.js"]
