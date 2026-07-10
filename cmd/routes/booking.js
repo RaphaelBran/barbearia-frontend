@@ -1,5 +1,6 @@
 const express = require('express');
 const { db } = require('../config/database');
+const { createCalendarEvent } = require('../config/google-service');
 
 const router = express.Router();
 
@@ -8,6 +9,7 @@ router.post('/', async (req, res) => {
     const { barber_id, client_name, client_phone, service, price, booking_date, booking_time } = req.body;
 
     try {
+        // Salvar no banco de dados
         const result = await new Promise((resolve, reject) => {
             db.run(
                 `INSERT INTO bookings (barber_id, client_name, client_phone, service, price, booking_date, booking_time)
@@ -18,6 +20,18 @@ router.post('/', async (req, res) => {
                     else resolve({ id: this.lastID });
                 }
             );
+        });
+
+        // Criar evento no Google Calendar (assíncrono, não bloqueia a resposta)
+        createCalendarEvent({
+            client_name,
+            client_phone,
+            service,
+            booking_date,
+            booking_time
+        }).catch(error => {
+            console.error('Erro ao criar evento no Google Calendar:', error);
+            // Não falha a resposta se o calendário falhar
         });
 
         res.json({ success: true, booking: { id: result.id, barber_id, client_name, client_phone, service, price, booking_date, booking_time } });
