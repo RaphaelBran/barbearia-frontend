@@ -213,16 +213,22 @@ function closeBookingModal() {
 
 // Mostrar tela específica do agendamento
 function showBookingScreen(screenNumber) {
+    console.log('showBookingScreen chamada com:', screenNumber);
+    
     for (let i = 1; i <= 5; i++) {
         const screen = document.getElementById(`booking-screen-${i}`);
         if (screen) {
             screen.classList.add('hidden');
+            console.log(`Escondendo tela ${i}`);
         }
     }
     
     const targetScreen = document.getElementById(`booking-screen-${screenNumber}`);
     if (targetScreen) {
         targetScreen.classList.remove('hidden');
+        console.log(`Exibindo tela ${screenNumber}`);
+    } else {
+        console.error(`Tela ${screenNumber} não encontrada!`);
     }
     
     if (screenNumber === 2) {
@@ -353,8 +359,11 @@ function initTimeSlots() {
 }
 
 function selectTime(time) {
+    console.log('Horário selecionado:', time);
     bookingData.time = time;
+    console.log('bookingData.time:', bookingData.time);
     showBookingScreen(4);
+    console.log('Tela 4 deve ser exibida');
 }
 
 // ===== FUNÇÕES DE CONFIRMAÇÃO =====
