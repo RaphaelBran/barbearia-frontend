@@ -24,8 +24,8 @@ const frontendDir = process.env.FRONTEND_DIR || parentDir;
 console.log('Servindo arquivos estáticos de:', frontendDir);
 app.use(express.static(frontendDir));
 
-// Initialize database before starting server
-async function startServer() {
+// Initialize database and configure routes
+async function configureServer() {
     try {
         console.log('Inicializando banco de dados...');
         await initDatabase();
@@ -46,15 +46,28 @@ async function startServer() {
             res.json({ status: 'ok', timestamp: new Date().toISOString() });
         });
 
-        // Start server - listen on all interfaces (0.0.0.0) for Railway
+        return app;
+    } catch (error) {
+        console.error('Erro fatal ao configurar servidor:', error);
+        throw error;
+    }
+}
+
+// Configure server for both serverless and traditional deployment
+const configuredApp = configureServer();
+
+// Start server only if not running in Vercel serverless environment
+if (require.main === module) {
+    configuredApp.then(() => {
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
             console.log('Ambiente:', process.env.NODE_ENV || 'development');
         });
-    } catch (error) {
+    }).catch(error => {
         console.error('Erro fatal ao iniciar servidor:', error);
         process.exit(1);
-    }
+    });
 }
 
-startServer();
+// Export for Vercel serverless
+module.exports = configuredApp;
