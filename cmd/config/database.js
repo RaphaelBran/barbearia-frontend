@@ -3,6 +3,8 @@ const { sql } = require('@vercel/postgres');
 // Criar tabelas se não existirem
 async function initDatabase() {
     try {
+        console.log('Iniciando inicialização do banco de dados...');
+        
         // Tabela de barbeiros
         await sql`
             CREATE TABLE IF NOT EXISTS barbers (
@@ -17,11 +19,15 @@ async function initDatabase() {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `;
+        console.log('Tabela barbers verificada/criada');
         
         // Dropar tabela bookings se existir (para recriar com schema correto)
+        console.log('Dropando tabela bookings se existir...');
         await sql`DROP TABLE IF EXISTS bookings CASCADE`;
+        console.log('Tabela bookings dropada (se existia)');
         
         // Tabela de agendamentos
+        console.log('Criando tabela bookings com schema correto...');
         await sql`
             CREATE TABLE bookings (
                 id SERIAL PRIMARY KEY,
@@ -37,6 +43,7 @@ async function initDatabase() {
                 FOREIGN KEY (barber_id) REFERENCES barbers(id)
             )
         `;
+        console.log('Tabela bookings criada com sucesso');
         
         console.log('Banco de dados Postgres inicializado com sucesso');
     } catch (error) {

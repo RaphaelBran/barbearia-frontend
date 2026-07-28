@@ -8,13 +8,17 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { barber_id, client_name, client_phone, service, price, booking_date, booking_time } = req.body;
 
+    console.log('Payload recebido:', { barber_id, client_name, client_phone, service, price, booking_date, booking_time });
+
     try {
         // Salvar no banco de dados
+        console.log('Tentando inserir no banco...');
         const result = await sql`
             INSERT INTO bookings (barber_id, client_name, client_phone, service, price, booking_date, booking_time)
             VALUES (${barber_id}, ${client_name}, ${client_phone}, ${service}, ${price}, ${booking_date}, ${booking_time})
             RETURNING id
         `;
+        console.log('Inserção bem-sucedida, ID:', result.rows[0].id);
 
         // Criar evento no Google Calendar (assíncrono, não bloqueia a resposta)
         createCalendarEvent({
@@ -31,6 +35,7 @@ router.post('/', async (req, res) => {
         res.json({ success: true, booking: { id: result.rows[0].id, barber_id, client_name, client_phone, service, price, booking_date, booking_time } });
     } catch (error) {
         console.error('Erro ao criar agendamento:', error);
+        console.error('Detalhes do erro:', error.message);
         res.status(500).json({ success: false, error: 'Erro ao criar agendamento' });
     }
 });
