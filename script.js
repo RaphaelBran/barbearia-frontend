@@ -380,8 +380,10 @@ function selectTime(time) {
 // ===== FUNÇÕES DE CONFIRMAÇÃO =====
 
 function confirmBooking() {
+    console.log('confirmBooking chamada');
     const clientName = document.getElementById('client-name').value;
     const clientPhone = document.getElementById('client-phone').value;
+    console.log('Nome:', clientName, 'Telefone:', clientPhone);
     
     if (!clientName || !clientPhone) {
         alert('Por favor, preencha todos os campos');
@@ -390,26 +392,35 @@ function confirmBooking() {
     
     bookingData.clientName = clientName;
     bookingData.clientPhone = clientPhone;
+    console.log('Dados completos:', bookingData);
     
     // Formatar data para YYYY-MM-DD
     const formattedDate = bookingData.date.toISOString().split('T')[0];
+    console.log('Data formatada:', formattedDate);
     
     // Enviar agendamento para o backend
+    const barberId = getBarberId(currentBarberKey);
+    console.log('Barber ID:', barberId);
+    
+    const bookingPayload = {
+        barber_id: barberId,
+        client_name: bookingData.clientName,
+        client_phone: bookingData.clientPhone,
+        service: bookingData.service,
+        price: bookingData.price,
+        booking_date: formattedDate,
+        booking_time: bookingData.time
+    };
+    console.log('Payload da API:', bookingPayload);
+    
     fetch(`${API_BASE_URL}/api/booking`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            barber_id: getBarberId(currentBarberKey),
-            client_name: bookingData.clientName,
-            client_phone: bookingData.clientPhone,
-            service: bookingData.service,
-            price: bookingData.price,
-            booking_date: formattedDate,
-            booking_time: bookingData.time
-        })
+        body: JSON.stringify(bookingPayload)
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Resposta da API:', data);
         if (data.success) {
             console.log('Agendamento criado com sucesso:', data.booking);
             showBookingScreen(5);
@@ -422,6 +433,7 @@ function confirmBooking() {
         alert('Erro ao criar agendamento. Tente novamente.');
     })
     .finally(() => {
+        console.log('Preparando WhatsApp...');
         
         // Formatar mensagem para WhatsApp
         const formattedDate = bookingData.date.toLocaleDateString('pt-BR');
@@ -434,14 +446,17 @@ function confirmBooking() {
             `💰 Valor: R$ ${bookingData.price},00\n\n` +
             `Aguardo confirmação!`
         );
+        console.log('Mensagem WhatsApp:', message);
         
         // Abrir WhatsApp após 1 segundo
         setTimeout(() => {
+            console.log('Abrindo WhatsApp...');
             window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${message}`, '_blank');
         }, 1000);
         
         // Fechar modais automaticamente após 3 segundos
         setTimeout(() => {
+            console.log('Fechando modais...');
             closeBookingModal();
             closeBarberModal();
         }, 3000);
