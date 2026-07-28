@@ -8,21 +8,13 @@ const calendarRoutes = require('./routes/calendar');
 const { initDatabase } = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 console.log('Iniciando servidor...');
-console.log('PORT:', PORT);
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from parent directory (or frontend directory in Docker)
-const parentDir = path.join(__dirname, '..');
-const frontendDir = process.env.FRONTEND_DIR || parentDir;
-console.log('Servindo arquivos estáticos de:', frontendDir);
-app.use(express.static(frontendDir));
 
 // Initialize database and configure routes
 async function configureServer() {
@@ -31,15 +23,10 @@ async function configureServer() {
         await initDatabase();
         console.log('Banco de dados inicializado com sucesso');
 
-        // Routes
+        // API Routes
         app.use('/auth', authRoutes);
         app.use('/api/booking', bookingRoutes);
         app.use('/api/calendar', calendarRoutes);
-
-        // Serve frontend
-        app.get('/', (req, res) => {
-            res.sendFile(path.join(frontendDir, 'index.html'));
-        });
 
         // Health check endpoint
         app.get('/health', (req, res) => {
@@ -53,21 +40,5 @@ async function configureServer() {
     }
 }
 
-// Configure server for both serverless and traditional deployment
-const configuredApp = configureServer();
-
-// Start server only if not running in Vercel serverless environment
-if (require.main === module) {
-    configuredApp.then(() => {
-        app.listen(PORT, '0.0.0.0', () => {
-            console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
-            console.log('Ambiente:', process.env.NODE_ENV || 'development');
-        });
-    }).catch(error => {
-        console.error('Erro fatal ao iniciar servidor:', error);
-        process.exit(1);
-    });
-}
-
-// Export for Vercel serverless
-module.exports = configuredApp;
+// Export configured app for Vercel serverless
+module.exports = configureServer();
