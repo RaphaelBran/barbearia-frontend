@@ -18,9 +18,12 @@ async function initDatabase() {
             )
         `;
         
+        // Dropar tabela bookings se existir (para recriar com schema correto)
+        await sql`DROP TABLE IF EXISTS bookings CASCADE`;
+        
         // Tabela de agendamentos
         await sql`
-            CREATE TABLE IF NOT EXISTS bookings (
+            CREATE TABLE bookings (
                 id SERIAL PRIMARY KEY,
                 barber_id INTEGER,
                 client_name TEXT NOT NULL,
