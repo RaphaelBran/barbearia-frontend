@@ -13,13 +13,13 @@ function getCalendarClient() {
     try {
         // Parse a chave JSON da variável de ambiente
         const keyFile = JSON.parse(serviceAccountKey);
+        console.log('Service Account email:', keyFile.client_email);
         
-        // Criar cliente JWT
+        // Criar cliente JWT (sem subject para agendar como a própria service account)
         const jwtClient = new JWT({
             email: keyFile.client_email,
             key: keyFile.private_key,
-            scopes: ['https://www.googleapis.com/auth/calendar'],
-            subject: process.env.GOOGLE_CALENDAR_ID // Opcional: para agendar em nome de outro usuário
+            scopes: ['https://www.googleapis.com/auth/calendar']
         });
 
         return jwtClient;
@@ -31,21 +31,26 @@ function getCalendarClient() {
 
 // Criar evento no Google Calendar
 async function createCalendarEvent(eventData) {
+    console.log('Iniciando criação de evento no Google Calendar:', eventData);
     const jwtClient = getCalendarClient();
     
     if (!jwtClient) {
+        console.error('Cliente JWT não configurado');
         throw new Error('Cliente JWT não configurado');
     }
 
     try {
+        console.log('Autorizando cliente JWT...');
         // Autorizar o cliente
         await jwtClient.authorize();
+        console.log('Cliente JWT autorizado com sucesso');
 
         // Criar cliente do Calendar
         const calendar = google.calendar({ version: 'v3', auth: jwtClient });
 
         // ID do calendário (usar 'primary' para o calendário da service account ou um ID específico)
         const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+        console.log('Usando calendarId:', calendarId);
 
         // Criar evento
         const event = {
@@ -68,6 +73,7 @@ async function createCalendarEvent(eventData) {
             }
         };
 
+        console.log('Inserindo evento no calendário...');
         const response = await calendar.events.insert({
             calendarId: calendarId,
             resource: event
@@ -76,7 +82,8 @@ async function createCalendarEvent(eventData) {
         console.log('Evento criado no Google Calendar:', response.data.id);
         return response.data;
     } catch (error) {
-        console.error('Erro ao criar evento no Google Calendar:', error);
+        console.error('Erro ao criar evento no Google Calendar:', error.message);
+        console.error('Detalhes do erro:', error);
         throw error;
     }
 }
