@@ -398,14 +398,45 @@ function confirmBooking() {
     const formattedDate = bookingData.date.toISOString().split('T')[0];
     console.log('Data formatada:', formattedDate);
     
-    // Enviar agendamento para o backend
+    // Formatar mensagem para WhatsApp (independente da API)
+    const formattedDateBR = bookingData.date.toLocaleDateString('pt-BR');
+    const message = encodeURIComponent(
+        `Olá! Confirmo meu agendamento:\n\n` +
+        `🔹Cliente: ${bookingData.clientName}\n` +
+        `🔹Serviço: ${bookingData.service}\n` +
+        `🔹Data: ${formattedDateBR}\n` +
+        `🔹Horário: ${bookingData.time}\n` +
+        `🔹Valor: R$ ${bookingData.price}`
+    );
+    console.log('Mensagem WhatsApp:', message);
+    
+    // Abrir WhatsApp imediatamente
+    const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${message}`;
+    console.log('URL WhatsApp:', whatsappUrl);
+    window.open(whatsappUrl, '_blank');
+    
+    // Fechar modais
+    closeBookingModal();
+    closeBarberModal();
+    
+    // Limpar dados
+    bookingData = {
+        service: null,
+        price: null,
+        date: null,
+        time: null,
+        clientName: null,
+        clientPhone: null
+    };
+    
+    // Enviar agendamento para o backend em background (não bloqueia o fluxo)
     const barberId = getBarberId(currentBarberKey);
     console.log('Barber ID:', barberId);
     
     const bookingPayload = {
         barber_id: barberId,
-        client_name: bookingData.clientName,
-        client_phone: bookingData.clientPhone,
+        client_name: clientName,
+        client_phone: clientPhone,
         service: bookingData.service,
         price: bookingData.price,
         booking_date: formattedDate,
@@ -423,44 +454,12 @@ function confirmBooking() {
         console.log('Resposta da API:', data);
         if (data.success) {
             console.log('Agendamento criado com sucesso:', data.booking);
-            
-            // Formatar mensagem para WhatsApp
-            const formattedDateBR = bookingData.date.toLocaleDateString('pt-BR');
-            const message = encodeURIComponent(
-                `Olá! Confirmo meu agendamento:\n\n` +
-                `�Cliente: ${bookingData.clientName}\n` +
-                `🔹Serviço: ${bookingData.service}\n` +
-                `�Data: ${formattedDateBR}\n` +
-                `🔹Horário: ${bookingData.time}\n` +
-                `�Valor: R$ ${bookingData.price}`
-            );
-            console.log('Mensagem WhatsApp:', message);
-            
-            // Abrir WhatsApp imediatamente
-            const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${message}`;
-            console.log('URL WhatsApp:', whatsappUrl);
-            window.open(whatsappUrl, '_blank');
-            
-            // Fechar modais
-            closeBookingModal();
-            closeBarberModal();
-            
-            // Limpar dados
-            bookingData = {
-                service: null,
-                price: null,
-                date: null,
-                time: null,
-                clientName: null,
-                clientPhone: null
-            };
         } else {
-            throw new Error('Erro ao criar agendamento');
+            console.error('Erro ao criar agendamento:', data);
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        alert('Erro ao criar agendamento. Tente novamente.');
+        console.error('Erro ao enviar agendamento para o backend:', error);
     });
 }
 
