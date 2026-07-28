@@ -423,7 +423,37 @@ function confirmBooking() {
         console.log('Resposta da API:', data);
         if (data.success) {
             console.log('Agendamento criado com sucesso:', data.booking);
-            showBookingScreen(5);
+            
+            // Formatar mensagem para WhatsApp
+            const formattedDateBR = bookingData.date.toLocaleDateString('pt-BR');
+            const message = encodeURIComponent(
+                `Olá! Confirmo meu agendamento:\n\n` +
+                `�Cliente: ${bookingData.clientName}\n` +
+                `🔹Serviço: ${bookingData.service}\n` +
+                `�Data: ${formattedDateBR}\n` +
+                `🔹Horário: ${bookingData.time}\n` +
+                `�Valor: R$ ${bookingData.price}`
+            );
+            console.log('Mensagem WhatsApp:', message);
+            
+            // Abrir WhatsApp imediatamente
+            const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${message}`;
+            console.log('URL WhatsApp:', whatsappUrl);
+            window.open(whatsappUrl, '_blank');
+            
+            // Fechar modais
+            closeBookingModal();
+            closeBarberModal();
+            
+            // Limpar dados
+            bookingData = {
+                service: null,
+                price: null,
+                date: null,
+                time: null,
+                clientName: null,
+                clientPhone: null
+            };
         } else {
             throw new Error('Erro ao criar agendamento');
         }
@@ -431,35 +461,6 @@ function confirmBooking() {
     .catch(error => {
         console.error('Erro:', error);
         alert('Erro ao criar agendamento. Tente novamente.');
-    })
-    .finally(() => {
-        console.log('Preparando WhatsApp...');
-        
-        // Formatar mensagem para WhatsApp
-        const formattedDate = bookingData.date.toLocaleDateString('pt-BR');
-        const message = encodeURIComponent(
-            `Olá! Confirmo meu agendamento:\n\n` +
-            `👤 Cliente: ${bookingData.clientName}\n` +
-            `✂️ Serviço: ${bookingData.service}\n` +
-            `📅 Data: ${formattedDate}\n` +
-            `⏰ Horário: ${bookingData.time}\n` +
-            `💰 Valor: R$ ${bookingData.price},00\n\n` +
-            `Aguardo confirmação!`
-        );
-        console.log('Mensagem WhatsApp:', message);
-        
-        // Abrir WhatsApp após 1 segundo
-        setTimeout(() => {
-            console.log('Abrindo WhatsApp...');
-            window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${message}`, '_blank');
-        }, 1000);
-        
-        // Fechar modais automaticamente após 3 segundos
-        setTimeout(() => {
-            console.log('Fechando modais...');
-            closeBookingModal();
-            closeBarberModal();
-        }, 3000);
     });
 }
 
