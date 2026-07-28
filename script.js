@@ -318,7 +318,11 @@ function selectDate(date) {
     bookingData.date = date;
     console.log('Data salva:', bookingData.date);
     
-    // Consultar horários ocupados para esta data
+    // Forçar transição imediata para tela 3 (horários)
+    console.log('Forçando transição para tela 3 (horários)');
+    showBookingScreen(3);
+    
+    // Consultar horários ocupados para esta data em background
     const formattedDate = date.toISOString().split('T')[0];
     const barberId = getBarberId(currentBarberKey);
     console.log('Buscando horários disponíveis para:', barberId, formattedDate);
@@ -329,14 +333,13 @@ function selectDate(date) {
             console.log('Resposta da API:', data);
             if (data.success) {
                 bookingData.bookedTimes = data.bookedTimes;
+                // Re-renderizar horários com os dados atualizados
+                initTimeSlots();
             }
-            console.log('Avançando para tela 3 (horários)');
-            showBookingScreen(3);
         })
         .catch(error => {
             console.error('Erro ao verificar horários disponíveis:', error);
-            console.log('Avançando para tela 3 mesmo com erro');
-            showBookingScreen(3);
+            // Continuar com horários vazios
         });
 }
 
