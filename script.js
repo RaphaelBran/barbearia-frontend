@@ -240,8 +240,10 @@ function showBookingScreen(screenNumber) {
 
 // Seleção de Serviço
 function selectService(serviceName, price) {
+    console.log('selectService chamada:', serviceName, price);
     bookingData.service = serviceName;
     bookingData.price = price;
+    console.log('Serviço salvo, avançando para tela 2');
     showBookingScreen(2);
 }
 
@@ -312,22 +314,28 @@ function changeMonth(delta) {
 }
 
 function selectDate(date) {
+    console.log('selectDate chamada:', date);
     bookingData.date = date;
+    console.log('Data salva:', bookingData.date);
     
     // Consultar horários ocupados para esta data
     const formattedDate = date.toISOString().split('T')[0];
     const barberId = getBarberId(currentBarberKey);
+    console.log('Buscando horários disponíveis para:', barberId, formattedDate);
     
     fetch(`${API_BASE_URL}/api/booking/available/${barberId}/${formattedDate}`)
         .then(response => response.json())
         .then(data => {
+            console.log('Resposta da API:', data);
             if (data.success) {
                 bookingData.bookedTimes = data.bookedTimes;
             }
+            console.log('Avançando para tela 3 (horários)');
             showBookingScreen(3);
         })
         .catch(error => {
             console.error('Erro ao verificar horários disponíveis:', error);
+            console.log('Avançando para tela 3 mesmo com erro');
             showBookingScreen(3);
         });
 }
