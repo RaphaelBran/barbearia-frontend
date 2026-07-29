@@ -10,6 +10,17 @@ router.post('/', async (req, res) => {
 
     console.log('Payload recebido:', { barber_id, client_name, client_phone, service, price, booking_date, booking_time });
 
+    // Validação dos campos obrigatórios
+    if (!service || service === null || service === undefined) {
+        console.error('Erro: service é nulo ou indefinido');
+        return res.status(400).json({ success: false, error: 'O campo service é obrigatório' });
+    }
+
+    if (!client_name || !client_phone || !booking_date || !booking_time) {
+        console.error('Erro: campos obrigatórios faltando');
+        return res.status(400).json({ success: false, error: 'Todos os campos são obrigatórios' });
+    }
+
     try {
         // Salvar no banco de dados
         console.log('Tentando inserir no banco...');

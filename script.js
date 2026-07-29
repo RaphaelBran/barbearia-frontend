@@ -415,20 +415,6 @@ function confirmBooking() {
     console.log('URL WhatsApp:', whatsappUrl);
     window.open(whatsappUrl, '_blank');
     
-    // Fechar modais
-    closeBookingModal();
-    closeBarberModal();
-    
-    // Limpar dados
-    bookingData = {
-        service: null,
-        price: null,
-        date: null,
-        time: null,
-        clientName: null,
-        clientPhone: null
-    };
-    
     // Enviar agendamento para o backend em background (não bloqueia o fluxo)
     const barberId = getBarberId(currentBarberKey);
     console.log('Barber ID:', barberId);
@@ -443,6 +429,20 @@ function confirmBooking() {
         booking_time: bookingData.time
     };
     console.log('Payload da API:', bookingPayload);
+    
+    // Fechar modais
+    closeBookingModal();
+    closeBarberModal();
+    
+    // Limpar dados
+    bookingData = {
+        service: null,
+        price: null,
+        date: null,
+        time: null,
+        clientName: null,
+        clientPhone: null
+    };
     
     fetch(`${API_BASE_URL}/api/booking`, {
         method: 'POST',
