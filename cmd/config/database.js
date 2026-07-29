@@ -21,6 +21,19 @@ async function initDatabase() {
         `;
         console.log('Tabela barbers verificada/criada');
         
+        // Inserir barbeiro padrão se a tabela estiver vazia
+        const { rows: barberCount } = await sql`SELECT COUNT(*) as count FROM barbers`;
+        if (barberCount[0].count === 0) {
+            console.log('Tabela barbers vazia, inserindo barbeiro padrão...');
+            await sql`
+                INSERT INTO barbers (id, name, whatsapp, instagram, instagram_handle, photo)
+                VALUES (1, 'Raphael', '15991932175', 'https://instagram.com/raphaelbarbearia', 'raphaelbarbearia', 'https://github.com/RaphaelBran.png')
+            `;
+            console.log('Barbeiro padrão inserido com ID 1');
+        } else {
+            console.log('Tabela barbers já contém dados');
+        }
+        
         // Tabela de agendamentos - sempre dropar e recriar para garantir schema correto
         console.log('Dropando tabela bookings se existir...');
         await sql`DROP TABLE IF EXISTS bookings CASCADE`;
