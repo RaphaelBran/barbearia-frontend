@@ -1,18 +1,12 @@
-// Configuração Centralizada dos Barbeiros - Sua Barbearia
-
-// URL do Backend - Detecta automaticamente (localhost ou produção)
-const API_BASE_URL = window.location.origin;
-
-// Número do WhatsApp para confirmação de agendamento (formato: 5511999999999)
-const NUMERO_WHATSAPP = '5515991932175';
+// ===== CONFIGURAÇÃO DOS BARBEIROS =====
 
 const BARBEIROS_CONFIG = {
   barbeiro1: {
-    nome: "Barbeiro 1",
+    nome: "Eduardo",
     whatsapp: "5515991932175",
-    instagram: "https://instagram.com",
-    instagramHandle: "@instagram",
-    foto: "https://ui-avatars.com/api/?name=Barbeiro+1&background=6c757d&color=fff&size=300",
+    instagram: "https://www.instagram.com/de_lara_barber/",
+    instagramHandle: "@de_lara_barber",
+    foto: "https://ui-avatars.com/api/?name=Eduardo&background=2d2d2d&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -22,11 +16,11 @@ const BARBEIROS_CONFIG = {
     ]
   },
   barbeiro2: {
-    nome: "Barbeiro 2",
-    whatsapp: "5511999999999",
-    instagram: "https://instagram.com",
-    instagramHandle: "@instagram",
-    foto: "https://ui-avatars.com/api/?name=Barbeiro+2&background=6c757d&color=fff&size=300",
+    nome: "Caique",
+    whatsapp: "5515999999999",
+    instagram: "https://www.instagram.com/caique_de_lara/",
+    instagramHandle: "@caique_de_lara",
+    foto: "https://ui-avatars.com/api/?name=Caique&background=4a4a4a&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -36,11 +30,11 @@ const BARBEIROS_CONFIG = {
     ]
   },
   barbeiro3: {
-    nome: "Barbeiro 3",
-    whatsapp: "5511999999999",
-    instagram: "https://instagram.com",
-    instagramHandle: "@instagram",
-    foto: "https://ui-avatars.com/api/?name=Barbeiro+3&background=6c757d&color=fff&size=300",
+    nome: "Jorge",
+    whatsapp: "5515999999999",
+    instagram: "https://www.instagram.com/barbeirogeorge/",
+    instagramHandle: "@barbeirogeorge",
+    foto: "https://ui-avatars.com/api/?name=Jorge&background=6c757d&color=fff&size=300",
     trabalhos: [
       "assets/work-1.jpg",
       "assets/work-2.jpg",
@@ -104,14 +98,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const isOpen = siteNav.classList.contains('active');
             menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
         });
-        // Fechar menu ao clicar em link
         siteNav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 siteNav.classList.remove('active');
                 menuToggle.setAttribute('aria-label', 'Abrir menu');
             });
         });
-        // Fechar menu ao clicar fora
         document.addEventListener('click', function(e) {
             if (!siteNav.contains(e.target) && !menuToggle.contains(e.target)) {
                 siteNav.classList.remove('active');
@@ -123,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== FUNÇÕES DO MODAL DE PERFIL DO BARBEIRO =====
 
-// Abrir modal de perfil do barbeiro
 function openBarberProfile(barberKey) {
     currentBarberKey = barberKey;
     currentBarber = BARBEIROS_CONFIG[barberKey];
@@ -133,22 +124,18 @@ function openBarberProfile(barberKey) {
         return;
     }
 
-    // Preencher dados do modal
     document.getElementById('barber-modal-img').src = currentBarber.foto;
     document.getElementById('barber-modal-name').textContent = currentBarber.nome;
     document.getElementById('barber-modal-instagram').href = currentBarber.instagram;
     document.getElementById('barber-modal-instagram-text').textContent = currentBarber.instagramHandle;
 
-    // Resetar carrossel
     carouselIndex = 0;
     document.getElementById('carousel-section').classList.remove('active');
 
-    // Mostrar modal
     document.getElementById('barber-modal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-// Fechar modal de perfil do barbeiro
 function closeBarberModal() {
     document.getElementById('barber-modal').classList.remove('active');
     document.body.style.overflow = 'auto';
@@ -156,7 +143,6 @@ function closeBarberModal() {
     currentBarber = null;
 }
 
-// Toggle do carrossel de trabalhos
 function toggleCarousel() {
     const carouselSection = document.getElementById('carousel-section');
     carouselSection.classList.toggle('active');
@@ -168,24 +154,20 @@ function toggleCarousel() {
 
 // ===== FUNÇÕES DO CARROSSEL =====
 
-// Inicializar carrossel
 function initCarousel() {
     const track = document.getElementById('carousel-track');
     const container = document.querySelector('.carousel-container');
     const nav = document.getElementById('carousel-nav');
     
-    // Limpar carrossel anterior
     track.innerHTML = '';
     nav.innerHTML = '';
     
-    // Criar slides
     currentBarber.trabalhos.forEach((foto, index) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
         slide.innerHTML = `<img src="${foto}" alt="Trabalho ${index + 1}" onerror="this.src='assets/logo.png'">`;
         track.appendChild(slide);
         
-        // Criar botão de navegação
         const navBtn = document.createElement('button');
         navBtn.className = index === 0 ? 'active' : '';
         navBtn.onclick = () => goToSlide(index);
@@ -195,8 +177,6 @@ function initCarousel() {
     carouselIndex = 0;
     updateCarousel();
     
-    // Touch events para swipe no carrossel
-    // AbortController para evitar acúmulo de listeners (memory leak)
     if (container._touchAbort) container._touchAbort.abort();
     container._touchAbort = new AbortController();
     const { signal } = container._touchAbort;
@@ -224,13 +204,11 @@ function initCarousel() {
     }, { passive: true, signal });
 }
 
-// Ir para slide específico
 function goToSlide(index) {
     carouselIndex = index;
     updateCarousel();
 }
 
-// Atualizar carrossel
 function updateCarousel() {
     const track = document.getElementById('carousel-track');
     const navBtns = document.querySelectorAll('.carousel-nav button');
@@ -244,7 +222,6 @@ function updateCarousel() {
 
 // ===== FUNÇÕES DO MODAL DE AGENDAMENTO =====
 
-// Abrir modal de agendamento
 function openBookingModal() {
     bookingData = {
         service: null,
@@ -262,12 +239,10 @@ function openBookingModal() {
     document.body.style.overflow = 'hidden';
 }
 
-// Fechar modal de agendamento
 function closeBookingModal() {
     document.getElementById('booking-modal').classList.remove('active');
     document.body.style.overflow = 'auto';
     
-    // Limpar dados ao fechar
     bookingData = {
         service: null,
         price: null,
@@ -278,7 +253,6 @@ function closeBookingModal() {
     };
 }
 
-// Mostrar tela específica do agendamento
 function showBookingScreen(screenNumber) {
     for (let i = 1; i <= 5; i++) {
         const screen = document.getElementById(`booking-screen-${i}`);
@@ -290,14 +264,9 @@ function showBookingScreen(screenNumber) {
     const targetScreen = document.getElementById(`booking-screen-${screenNumber}`);
     if (targetScreen) {
         targetScreen.classList.remove('hidden');
-    } else {
-        console.error(`Tela ${screenNumber} não encontrada!`);
     }
     
-    // Renderizar botão Voltar (telas 2, 3 e 4)
     renderBackButton(screenNumber);
-    
-    // Renderizar stepper de progresso (telas 1-4)
     renderStepper(screenNumber);
     
     if (screenNumber === 2) {
@@ -307,21 +276,17 @@ function showBookingScreen(screenNumber) {
     }
 }
 
-// Renderizar botão Voltar dinamicamente
 function renderBackButton(screenNumber) {
     const bookingBody = document.querySelector('.booking-body');
-    // Remover botão existente se houver
     const existingBtn = bookingBody.querySelector('.booking-back-btn');
     if (existingBtn) existingBtn.remove();
     
-    // Só mostrar nas telas 2, 3 e 4
     if (screenNumber >= 2 && screenNumber <= 4) {
         const backBtn = document.createElement('button');
         backBtn.className = 'booking-back-btn';
         backBtn.innerHTML = '← Voltar';
         backBtn.onclick = () => showBookingScreen(screenNumber - 1);
-        bookingBody.insertBefore(backBtn, bookingBody.firstChild.nextSibling || bookingBody.firstChild);
-        // Inserir após o container do stepper
+        
         const progressContainer = document.getElementById('booking-progress-container');
         if (progressContainer && progressContainer.nextSibling) {
             bookingBody.insertBefore(backBtn, progressContainer.nextSibling);
@@ -331,13 +296,11 @@ function renderBackButton(screenNumber) {
     }
 }
 
-// Renderizar stepper de progresso
 function renderStepper(screenNumber) {
     const container = document.getElementById('booking-progress-container');
     if (!container) return;
     container.innerHTML = '';
     
-    // Só mostrar nas telas 1-4
     if (screenNumber < 1 || screenNumber > 4) return;
     
     const steps = [
@@ -351,7 +314,6 @@ function renderStepper(screenNumber) {
     stepper.className = 'booking-progress';
     
     steps.forEach((step, index) => {
-        // Step circle + label
         const stepEl = document.createElement('div');
         stepEl.className = 'progress-step';
         if (step.num === screenNumber) {
@@ -372,7 +334,6 @@ function renderStepper(screenNumber) {
         stepEl.appendChild(label);
         stepper.appendChild(stepEl);
         
-        // Linha conectora (exceto após o último)
         if (index < steps.length - 1) {
             const line = document.createElement('div');
             line.className = 'progress-line';
@@ -386,7 +347,6 @@ function renderStepper(screenNumber) {
     container.appendChild(stepper);
 }
 
-// Seleção de Serviço
 function selectService(serviceName, price) {
     bookingData.service = serviceName;
     bookingData.price = price;
@@ -462,29 +422,7 @@ function changeMonth(delta) {
 function selectDate(date) {
     bookingData.date = date;
     showBookingScreen(3);
-    
-    // Mostrar loading state na área dos horários
-    const timeGrid = document.getElementById('time-grid');
-    timeGrid.innerHTML = '<div class="time-grid-loading"><div class="spinner"></div><span>Carregando horários...</span></div>';
-    
-    // Consultar horários ocupados para esta data em background
-    const formattedDate = date.toISOString().split('T')[0];
-    const barberId = getBarberId(currentBarberKey);
-    
-    fetch(`${API_BASE_URL}/api/booking/available/${barberId}/${formattedDate}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                bookingData.bookedTimes = data.bookedTimes;
-                // Re-renderizar horários com os dados atualizados
-                initTimeSlots();
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao verificar horários disponíveis:', error);
-            // Em caso de erro, mostrar horários vazios
-            initTimeSlots();
-        });
+    initTimeSlots();
 }
 
 // ===== FUNÇÕES DE HORÁRIOS =====
@@ -493,22 +431,11 @@ function initTimeSlots() {
     const timeGrid = document.getElementById('time-grid');
     timeGrid.innerHTML = '';
     
-    const bookedTimes = bookingData.bookedTimes || [];
-    
     availableTimeSlots.forEach(time => {
         const timeBtn = document.createElement('button');
         timeBtn.className = 'time-slot';
         timeBtn.textContent = time;
-        
-        // Verificar se o horário está ocupado
-        if (bookedTimes.includes(time)) {
-            timeBtn.classList.add('disabled');
-            timeBtn.disabled = true;
-            timeBtn.title = 'Horário já ocupado';
-        } else {
-            timeBtn.onclick = () => selectTime(time);
-        }
-        
+        timeBtn.onclick = () => selectTime(time);
         timeGrid.appendChild(timeBtn);
     });
 }
@@ -532,75 +459,28 @@ function confirmBooking() {
     bookingData.clientName = clientName;
     bookingData.clientPhone = clientPhone;
     
-    // Formatar data para YYYY-MM-DD
-    const formattedDate = bookingData.date.toISOString().split('T')[0];
-    
-    // Formatar mensagem para WhatsApp (independente da API)
     const formattedDateBR = bookingData.date.toLocaleDateString('pt-BR');
-    // Mensagem para WhatsApp (usada como fallback se API falhar)
-    const message = `Olá! Confirmo meu agendamento:\n\n` +
-        `🔹Cliente: ${bookingData.clientName}\n` +
-        `🔹Serviço: ${bookingData.service}\n` +
-        `🔹Data: ${formattedDateBR}\n` +
-        `🔹Horário: ${bookingData.time}\n` +
-        `🔹Valor: R$ ${bookingData.price}`;
     
-    // Mostrar toast de sucesso
-    showToast('Agendamento confirmado com sucesso!', 'success');
+    // Montar mensagem para WhatsApp
+    const message = `Olá! Gostaria de agendar um horário:\n\n` +
+        `👤 Cliente: ${bookingData.clientName}\n` +
+        `📞 Telefone: ${bookingData.clientPhone}\n` +
+        `✂️ Serviço: ${bookingData.service}\n` +
+        `📅 Data: ${formattedDateBR}\n` +
+        `⏰ Horário: ${bookingData.time}\n` +
+        `💰 Valor: R$ ${bookingData.price}`;
     
-    // Mostrar tela de sucesso (screen 5)
-    showBookingScreen(5);
+    // Abrir WhatsApp direto com a mensagem
+    const whatsappUrl = `https://wa.me/${currentBarber.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
     
-    // Enviar agendamento para o backend em background (não bloqueia o fluxo)
-    const barberId = getBarberId(currentBarberKey);
+    // Mostrar feedback visual
+    showToast('Redirecionando para WhatsApp...', 'success');
     
-    const bookingPayload = {
-        barber_id: barberId,
-        client_name: clientName,
-        client_phone: clientPhone,
-        service: bookingData.service,
-        price: bookingData.price,
-        booking_date: formattedDate,
-        booking_time: bookingData.time
-    };
-    
-    // Não fechar modais automaticamente - usuário verá tela de sucesso
-    // Os dados serão limpos quando o usuário clicar Fechar
-    
-    fetch(`${API_BASE_URL}/api/booking`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookingPayload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Agendamento criado com sucesso
-        } else {
-            console.error('Erro ao criar agendamento:', data);
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao enviar agendamento:', error);
-        // Fallback: abrir WhatsApp se API falhar
-        const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
-        const link = document.createElement('a');
-        link.href = whatsappUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.click();
-        showToast('Erro ao conectar ao servidor. Redirecionando para WhatsApp...', 'error');
-    });
-}
-
-// Mapeamento de barbeiro para ID do banco de dados
-function getBarberId(barberKey) {
-    const barberIds = {
-        'barbeiro1': 1,
-        'barbeiro2': 2,
-        'barbeiro3': 3
-    };
-    return barberIds[barberKey] || 1;
+    // Fechar modal após breve intervalo
+    setTimeout(() => {
+        closeBookingModal();
+    }, 1500);
 }
 
 // ===== TOAST NOTIFICATION =====
@@ -612,7 +492,6 @@ function showToast(message, type = '') {
     toast.className = 'toast';
     if (type) toast.classList.add(type);
     
-    // Forçar reflow para reiniciar animação
     void toast.offsetWidth;
     toast.classList.add('show');
     
@@ -628,12 +507,9 @@ function initPhoneMask() {
     if (!phoneInput) return;
     
     phoneInput.addEventListener('input', function(e) {
-        // Remover tudo que não é dígito
         let value = e.target.value.replace(/\D/g, '');
-        // Limitar a 11 dígitos
         value = value.slice(0, 11);
         
-        // Formatar progressivamente
         if (value.length > 7) {
             value = `(${value.slice(0,2)}) ${value.slice(2,7)}-${value.slice(7)}`;
         } else if (value.length > 2) {

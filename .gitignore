@@ -1,6 +1,4 @@
 node_modules/
 .env
+.env.production
 database.sqlite
-
-.vercel
-.env*
