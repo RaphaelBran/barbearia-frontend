@@ -91,6 +91,34 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Inicializar máscara de telefone
+    initPhoneMask();
+
+    // Menu hamburguer
+    const menuToggle = document.getElementById('menuToggle');
+    const siteNav = document.getElementById('siteNav');
+    if (menuToggle && siteNav) {
+        menuToggle.addEventListener('click', function() {
+            siteNav.classList.toggle('active');
+            const isOpen = siteNav.classList.contains('active');
+            menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+        });
+        // Fechar menu ao clicar em link
+        siteNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                siteNav.classList.remove('active');
+                menuToggle.setAttribute('aria-label', 'Abrir menu');
+            });
+        });
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!siteNav.contains(e.target) && !menuToggle.contains(e.target)) {
+                siteNav.classList.remove('active');
+                menuToggle.setAttribute('aria-label', 'Abrir menu');
+            }
+        });
+    }
 });
 
 // ===== FUNÇÕES DO MODAL DE PERFIL DO BARBEIRO =====
@@ -101,7 +129,7 @@ function openBarberProfile(barberKey) {
     currentBarber = BARBEIROS_CONFIG[barberKey];
 
     if (!currentBarber) {
-        alert('Erro: Barbeiro não encontrado');
+        showToast('Erro: Barbeiro não encontrado', 'error');
         return;
     }
 
@@ -143,6 +171,7 @@ function toggleCarousel() {
 // Inicializar carrossel
 function initCarousel() {
     const track = document.getElementById('carousel-track');
+    const container = document.querySelector('.carousel-container');
     const nav = document.getElementById('carousel-nav');
     
     // Limpar carrossel anterior
@@ -165,6 +194,34 @@ function initCarousel() {
     
     carouselIndex = 0;
     updateCarousel();
+    
+    // Touch events para swipe no carrossel
+    // AbortController para evitar acúmulo de listeners (memory leak)
+    if (container._touchAbort) container._touchAbort.abort();
+    container._touchAbort = new AbortController();
+    const { signal } = container._touchAbort;
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true, signal });
+    
+    container.addEventListener('touchmove', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+    }, { passive: true, signal });
+    
+    container.addEventListener('touchend', function() {
+        const delta = touchStartX - touchEndX;
+        if (Math.abs(delta) > 50) {
+            if (delta > 0 && carouselIndex < currentBarber.trabalhos.length - 1) {
+                goToSlide(carouselIndex + 1);
+            } else if (delta < 0 && carouselIndex > 0) {
+                goToSlide(carouselIndex - 1);
+            }
+        }
+    }, { passive: true, signal });
 }
 
 // Ir para slide específico
@@ -209,27 +266,39 @@ function openBookingModal() {
 function closeBookingModal() {
     document.getElementById('booking-modal').classList.remove('active');
     document.body.style.overflow = 'auto';
+    
+    // Limpar dados ao fechar
+    bookingData = {
+        service: null,
+        price: null,
+        date: null,
+        time: null,
+        clientName: null,
+        clientPhone: null
+    };
 }
 
 // Mostrar tela específica do agendamento
 function showBookingScreen(screenNumber) {
-    console.log('showBookingScreen chamada com:', screenNumber);
-    
     for (let i = 1; i <= 5; i++) {
         const screen = document.getElementById(`booking-screen-${i}`);
         if (screen) {
             screen.classList.add('hidden');
-            console.log(`Escondendo tela ${i}`);
         }
     }
     
     const targetScreen = document.getElementById(`booking-screen-${screenNumber}`);
     if (targetScreen) {
         targetScreen.classList.remove('hidden');
-        console.log(`Exibindo tela ${screenNumber}`);
     } else {
         console.error(`Tela ${screenNumber} não encontrada!`);
     }
+    
+    // Renderizar botão Voltar (telas 2, 3 e 4)
+    renderBackButton(screenNumber);
+    
+    // Renderizar stepper de progresso (telas 1-4)
+    renderStepper(screenNumber);
     
     if (screenNumber === 2) {
         initCalendar();
@@ -238,12 +307,89 @@ function showBookingScreen(screenNumber) {
     }
 }
 
+// Renderizar botão Voltar dinamicamente
+function renderBackButton(screenNumber) {
+    const bookingBody = document.querySelector('.booking-body');
+    // Remover botão existente se houver
+    const existingBtn = bookingBody.querySelector('.booking-back-btn');
+    if (existingBtn) existingBtn.remove();
+    
+    // Só mostrar nas telas 2, 3 e 4
+    if (screenNumber >= 2 && screenNumber <= 4) {
+        const backBtn = document.createElement('button');
+        backBtn.className = 'booking-back-btn';
+        backBtn.innerHTML = '← Voltar';
+        backBtn.onclick = () => showBookingScreen(screenNumber - 1);
+        bookingBody.insertBefore(backBtn, bookingBody.firstChild.nextSibling || bookingBody.firstChild);
+        // Inserir após o container do stepper
+        const progressContainer = document.getElementById('booking-progress-container');
+        if (progressContainer && progressContainer.nextSibling) {
+            bookingBody.insertBefore(backBtn, progressContainer.nextSibling);
+        } else {
+            bookingBody.insertBefore(backBtn, bookingBody.firstChild);
+        }
+    }
+}
+
+// Renderizar stepper de progresso
+function renderStepper(screenNumber) {
+    const container = document.getElementById('booking-progress-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    // Só mostrar nas telas 1-4
+    if (screenNumber < 1 || screenNumber > 4) return;
+    
+    const steps = [
+        { num: 1, label: 'Serviço' },
+        { num: 2, label: 'Data' },
+        { num: 3, label: 'Horário' },
+        { num: 4, label: 'Dados' }
+    ];
+    
+    const stepper = document.createElement('div');
+    stepper.className = 'booking-progress';
+    
+    steps.forEach((step, index) => {
+        // Step circle + label
+        const stepEl = document.createElement('div');
+        stepEl.className = 'progress-step';
+        if (step.num === screenNumber) {
+            stepEl.classList.add('active');
+        } else if (step.num < screenNumber) {
+            stepEl.classList.add('completed');
+        }
+        
+        const circle = document.createElement('div');
+        circle.className = 'step-circle';
+        circle.textContent = step.num < screenNumber ? '✓' : step.num;
+        
+        const label = document.createElement('div');
+        label.className = 'step-label';
+        label.textContent = step.label;
+        
+        stepEl.appendChild(circle);
+        stepEl.appendChild(label);
+        stepper.appendChild(stepEl);
+        
+        // Linha conectora (exceto após o último)
+        if (index < steps.length - 1) {
+            const line = document.createElement('div');
+            line.className = 'progress-line';
+            if (step.num < screenNumber) {
+                line.classList.add('completed');
+            }
+            stepper.appendChild(line);
+        }
+    });
+    
+    container.appendChild(stepper);
+}
+
 // Seleção de Serviço
 function selectService(serviceName, price) {
-    console.log('selectService chamada:', serviceName, price);
     bookingData.service = serviceName;
     bookingData.price = price;
-    console.log('Serviço salvo, avançando para tela 2');
     showBookingScreen(2);
 }
 
@@ -314,23 +460,20 @@ function changeMonth(delta) {
 }
 
 function selectDate(date) {
-    console.log('selectDate chamada:', date);
     bookingData.date = date;
-    console.log('Data salva:', bookingData.date);
-    
-    // Forçar transição imediata para tela 3 (horários)
-    console.log('Forçando transição para tela 3 (horários)');
     showBookingScreen(3);
+    
+    // Mostrar loading state na área dos horários
+    const timeGrid = document.getElementById('time-grid');
+    timeGrid.innerHTML = '<div class="time-grid-loading"><div class="spinner"></div><span>Carregando horários...</span></div>';
     
     // Consultar horários ocupados para esta data em background
     const formattedDate = date.toISOString().split('T')[0];
     const barberId = getBarberId(currentBarberKey);
-    console.log('Buscando horários disponíveis para:', barberId, formattedDate);
     
     fetch(`${API_BASE_URL}/api/booking/available/${barberId}/${formattedDate}`)
         .then(response => response.json())
         .then(data => {
-            console.log('Resposta da API:', data);
             if (data.success) {
                 bookingData.bookedTimes = data.bookedTimes;
                 // Re-renderizar horários com os dados atualizados
@@ -339,7 +482,8 @@ function selectDate(date) {
         })
         .catch(error => {
             console.error('Erro ao verificar horários disponíveis:', error);
-            // Continuar com horários vazios
+            // Em caso de erro, mostrar horários vazios
+            initTimeSlots();
         });
 }
 
@@ -370,54 +514,45 @@ function initTimeSlots() {
 }
 
 function selectTime(time) {
-    console.log('Horário selecionado:', time);
     bookingData.time = time;
-    console.log('bookingData.time:', bookingData.time);
     showBookingScreen(4);
-    console.log('Tela 4 deve ser exibida');
 }
 
 // ===== FUNÇÕES DE CONFIRMAÇÃO =====
 
 function confirmBooking() {
-    console.log('confirmBooking chamada');
     const clientName = document.getElementById('client-name').value;
     const clientPhone = document.getElementById('client-phone').value;
-    console.log('Nome:', clientName, 'Telefone:', clientPhone);
     
     if (!clientName || !clientPhone) {
-        alert('Por favor, preencha todos os campos');
+        showToast('Por favor, preencha todos os campos', 'error');
         return;
     }
     
     bookingData.clientName = clientName;
     bookingData.clientPhone = clientPhone;
-    console.log('Dados completos:', bookingData);
     
     // Formatar data para YYYY-MM-DD
     const formattedDate = bookingData.date.toISOString().split('T')[0];
-    console.log('Data formatada:', formattedDate);
     
     // Formatar mensagem para WhatsApp (independente da API)
     const formattedDateBR = bookingData.date.toLocaleDateString('pt-BR');
-    const message = encodeURIComponent(
-        `Olá! Confirmo meu agendamento:\n\n` +
+    // Mensagem para WhatsApp (usada como fallback se API falhar)
+    const message = `Olá! Confirmo meu agendamento:\n\n` +
         `🔹Cliente: ${bookingData.clientName}\n` +
         `🔹Serviço: ${bookingData.service}\n` +
         `🔹Data: ${formattedDateBR}\n` +
         `🔹Horário: ${bookingData.time}\n` +
-        `🔹Valor: R$ ${bookingData.price}`
-    );
-    console.log('Mensagem WhatsApp:', message);
+        `🔹Valor: R$ ${bookingData.price}`;
     
-    // Abrir WhatsApp imediatamente
-    const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${message}`;
-    console.log('URL WhatsApp:', whatsappUrl);
-    window.open(whatsappUrl, '_blank');
+    // Mostrar toast de sucesso
+    showToast('Agendamento confirmado com sucesso!', 'success');
+    
+    // Mostrar tela de sucesso (screen 5)
+    showBookingScreen(5);
     
     // Enviar agendamento para o backend em background (não bloqueia o fluxo)
     const barberId = getBarberId(currentBarberKey);
-    console.log('Barber ID:', barberId);
     
     const bookingPayload = {
         barber_id: barberId,
@@ -428,21 +563,9 @@ function confirmBooking() {
         booking_date: formattedDate,
         booking_time: bookingData.time
     };
-    console.log('Payload da API:', bookingPayload);
     
-    // Fechar modais
-    closeBookingModal();
-    closeBarberModal();
-    
-    // Limpar dados
-    bookingData = {
-        service: null,
-        price: null,
-        date: null,
-        time: null,
-        clientName: null,
-        clientPhone: null
-    };
+    // Não fechar modais automaticamente - usuário verá tela de sucesso
+    // Os dados serão limpos quando o usuário clicar Fechar
     
     fetch(`${API_BASE_URL}/api/booking`, {
         method: 'POST',
@@ -451,15 +574,22 @@ function confirmBooking() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Resposta da API:', data);
         if (data.success) {
-            console.log('Agendamento criado com sucesso:', data.booking);
+            // Agendamento criado com sucesso
         } else {
             console.error('Erro ao criar agendamento:', data);
         }
     })
     .catch(error => {
-        console.error('Erro ao enviar agendamento para o backend:', error);
+        console.error('Erro ao enviar agendamento:', error);
+        // Fallback: abrir WhatsApp se API falhar
+        const whatsappUrl = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+        const link = document.createElement('a');
+        link.href = whatsappUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.click();
+        showToast('Erro ao conectar ao servidor. Redirecionando para WhatsApp...', 'error');
     });
 }
 
@@ -471,6 +601,49 @@ function getBarberId(barberKey) {
         'barbeiro3': 3
     };
     return barberIds[barberKey] || 1;
+}
+
+// ===== TOAST NOTIFICATION =====
+
+function showToast(message, type = '') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.className = 'toast';
+    if (type) toast.classList.add(type);
+    
+    // Forçar reflow para reiniciar animação
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
+
+// ===== MÁSCARA DE TELEFONE =====
+
+function initPhoneMask() {
+    const phoneInput = document.getElementById('client-phone');
+    if (!phoneInput) return;
+    
+    phoneInput.addEventListener('input', function(e) {
+        // Remover tudo que não é dígito
+        let value = e.target.value.replace(/\D/g, '');
+        // Limitar a 11 dígitos
+        value = value.slice(0, 11);
+        
+        // Formatar progressivamente
+        if (value.length > 7) {
+            value = `(${value.slice(0,2)}) ${value.slice(2,7)}-${value.slice(7)}`;
+        } else if (value.length > 2) {
+            value = `(${value.slice(0,2)}) ${value.slice(2)}`;
+        } else if (value.length > 0) {
+            value = `(${value}`;
+        }
+        
+        e.target.value = value;
+    });
 }
 
 // ===== FECHAR MODAIS COM ESC =====

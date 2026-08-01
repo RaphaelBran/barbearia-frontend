@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
     <title>Sua Barbearia</title>
     
     <!-- Google Fonts -->
@@ -14,24 +15,38 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
+
+    <header class="site-header">
+        <div class="header-content">
+            <a href="#" class="header-logo" aria-label="Ir para página inicial">Barbearia</a>
+            <nav class="site-nav" id="siteNav">
+                <a href="#barbeiros" aria-label="Ver barbeiros">Barbeiros</a>
+                <a href="#barbeiros" id="navAgendar" aria-label="Agendar horário">Agendar</a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
     <!-- Logo Section -->
     <div class="logo-section">
         <div class="logo-placeholder">
-            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo da barbearia" role="img">
                 <path d="M6 6L12 2L18 6M6 6L12 10L18 6M6 6V18L12 22L18 18V6" stroke="#4a4a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M12 2V10M6 6L18 6M6 18L18 18" stroke="#4a4a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <p>Sua Logo Aqui</p>
         </div>
-        <a href="https://instagram.com" target="_blank" class="instagram-btn">
-            <svg fill="currentColor" viewBox="0 0 24 24">
+        <a href="https://instagram.com" target="_blank" class="instagram-btn" aria-label="Seguir no Instagram">
+            <svg fill="currentColor" viewBox="0 0 24 24" aria-label="Instagram" role="img">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
             @instagram
         </a>
-        <a href="https://google.com/maps" target="_blank" class="location-btn">
-            <svg fill="currentColor" viewBox="0 0 24 24">
+        <a href="https://google.com/maps" target="_blank" class="location-btn" aria-label="Ver localização no mapa">
+            <svg fill="currentColor" viewBox="0 0 24 24" aria-label="Localização" role="img">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
             </svg>
             Localização
@@ -39,7 +54,7 @@
     </div>
     
     <!-- Barbers Section -->
-    <div class="barbers-section">
+    <div class="barbers-section" id="barbeiros">
         <h2>Nossa Equipe</h2>
         <div class="barbers-grid">
             <!-- Barbeiro 1 -->
@@ -47,7 +62,7 @@
                 <img src="https://ui-avatars.com/api/?name=Barbeiro+1&background=6c757d&color=fff&size=300" alt="Barbeiro 1">
                 <h3>Barbeiro 1</h3>
                 <p>Barbeiro Profissional</p>
-                <button class="view-profile-btn">Ver Perfil</button>
+                <button class="view-profile-btn" aria-label="Ver trabalhos de Barbeiro 1">Ver Perfil</button>
             </div>
             
             <!-- Barbeiro 2 -->
@@ -55,7 +70,7 @@
                 <img src="https://ui-avatars.com/api/?name=Barbeiro+2&background=6c757d&color=fff&size=300" alt="Barbeiro 2">
                 <h3>Barbeiro 2</h3>
                 <p>Barbeiro Profissional</p>
-                <button class="view-profile-btn">Ver Perfil</button>
+                <button class="view-profile-btn" aria-label="Ver trabalhos de Barbeiro 2">Ver Perfil</button>
             </div>
             
             <!-- Barbeiro 3 -->
@@ -63,20 +78,21 @@
                 <img src="https://ui-avatars.com/api/?name=Barbeiro+3&background=6c757d&color=fff&size=300" alt="Barbeiro 3">
                 <h3>Barbeiro 3</h3>
                 <p>Barbeiro Profissional</p>
-                <button class="view-profile-btn">Ver Perfil</button>
+                <button class="view-profile-btn" aria-label="Ver trabalhos de Barbeiro 3">Ver Perfil</button>
             </div>
         </div>
     </div>
+    </main>
     
     <!-- Barber Profile Modal -->
     <div id="barber-modal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeBarberModal()">×</button>
+            <button class="modal-close" onclick="closeBarberModal()" aria-label="Fechar">×</button>
             <div class="modal-header">
                 <img id="barber-modal-img" src="" alt="">
                 <h3 id="barber-modal-name"></h3>
-                <a id="barber-modal-instagram" href="" target="_blank" class="instagram-link">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
+                <a id="barber-modal-instagram" href="" target="_blank" class="instagram-link" aria-label="Ver Instagram do barbeiro">
+                    <svg fill="currentColor" viewBox="0 0 24 24" aria-label="Instagram" role="img">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                     </svg>
                     <span id="barber-modal-instagram-text"></span>
@@ -105,23 +121,24 @@
     <!-- Booking Modal -->
     <div id="booking-modal" class="booking-modal">
         <div class="booking-content">
-            <button class="booking-close" onclick="closeBookingModal()">×</button>
+            <button class="booking-close" onclick="closeBookingModal()" aria-label="Fechar">×</button>
             <div class="booking-header">
                 <h3 id="booking-title">Agendar Horário</h3>
             </div>
             <div class="booking-body">
+                <div class="booking-progress-container" id="booking-progress-container"></div>
                 <!-- Screen 1: Service Selection -->
                 <div id="booking-screen-1" class="booking-screen">
                     <h4 style="text-align: center; margin-bottom: 20px; font-size: 18px; color: #4a4a4a; font-weight: 700;">Escolha o Serviço</h4>
-                    <div class="service-item" onclick="selectService('Corte', 50)">
+                    <div class="service-item" onclick="selectService('Corte', 50)" aria-label="Selecionar serviço Corte por R$ 50,00" role="button" tabindex="0">
                         <h4>Corte</h4>
                         <span class="price">R$ 50,00</span>
                     </div>
-                    <div class="service-item" onclick="selectService('Barba', 50)">
+                    <div class="service-item" onclick="selectService('Barba', 50)" aria-label="Selecionar serviço Barba por R$ 50,00" role="button" tabindex="0">
                         <h4>Barba</h4>
                         <span class="price">R$ 50,00</span>
                     </div>
-                    <div class="service-item" onclick="selectService('Combo', 90)">
+                    <div class="service-item" onclick="selectService('Combo', 90)" aria-label="Selecionar serviço Combo por R$ 90,00" role="button" tabindex="0">
                         <h4>Combo</h4>
                         <span class="price">R$ 90,00</span>
                     </div>
@@ -132,9 +149,9 @@
                     <h4 style="text-align: center; margin-bottom: 20px; font-size: 18px; color: #4a4a4a; font-weight: 700;">Escolha a Data</h4>
                     <div class="calendar-container">
                         <div class="calendar-header">
-                            <button onclick="changeMonth(-1)">‹</button>
+                            <button onclick="changeMonth(-1)" aria-label="Mês anterior">‹</button>
                             <span id="current-month"></span>
-                            <button onclick="changeMonth(1)">›</button>
+                            <button onclick="changeMonth(1)" aria-label="Próximo mês">›</button>
                         </div>
                         <div class="calendar-grid" id="calendar-grid">
                             <!-- Calendar days will be generated by JavaScript -->
@@ -155,11 +172,11 @@
                     <h4 style="text-align: center; margin-bottom: 20px; font-size: 18px; color: #4a4a4a; font-weight: 700;">Seus Dados</h4>
                     <div class="form-group">
                         <label>Seu Nome</label>
-                        <input type="text" id="client-name" placeholder="Digite seu nome">
+                        <input type="text" id="client-name" placeholder="Digite seu nome" autocomplete="name">
                     </div>
                     <div class="form-group">
                         <label>Seu Telefone</label>
-                        <input type="tel" id="client-phone" placeholder="(15) 99193-2175">
+                        <input type="tel" id="client-phone" placeholder="(15) 99193-2175" autocomplete="tel" inputmode="tel">
                     </div>
                     <button class="btn-confirm" onclick="confirmBooking()">Confirmar Agendamento</button>
                 </div>
@@ -168,12 +185,23 @@
                 <div id="booking-screen-5" class="booking-screen hidden">
                     <div class="success-message">
                         <p>Sua barbearia agradece a preferência!</p>
+                        <button class="btn-close-booking" onclick="closeBookingModal()">Fechar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Barbearia. Todos os direitos reservados.</p>
+            <p>Horário de funcionamento: Seg-Sáb 9h-20h</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
     <!-- Script -->
     <script src="script.js"></script>
 </body>
