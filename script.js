@@ -88,29 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar máscara de telefone
     initPhoneMask();
-
-    // Menu hamburguer
-    const menuToggle = document.getElementById('menuToggle');
-    const siteNav = document.getElementById('siteNav');
-    if (menuToggle && siteNav) {
-        menuToggle.addEventListener('click', function() {
-            siteNav.classList.toggle('active');
-            const isOpen = siteNav.classList.contains('active');
-            menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
-        });
-        siteNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                siteNav.classList.remove('active');
-                menuToggle.setAttribute('aria-label', 'Abrir menu');
-            });
-        });
-        document.addEventListener('click', function(e) {
-            if (!siteNav.contains(e.target) && !menuToggle.contains(e.target)) {
-                siteNav.classList.remove('active');
-                menuToggle.setAttribute('aria-label', 'Abrir menu');
-            }
-        });
-    }
 });
 
 // ===== FUNÇÕES DO MODAL DE PERFIL DO BARBEIRO =====
